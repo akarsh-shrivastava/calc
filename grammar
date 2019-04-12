@@ -1,0 +1,10 @@
+E -> (E)
+E -> E binop E
+E -> unop E
+E -> func(E)
+E e  DATA
+func e FUNCS
+binop e {+,-,*,/,%,=,&,|,^,&&,||,+=,-=,*=,/=,%=,&=,|=,^=,<<,>>,<,>,<=,>=,==,!=}
+unop  e {!,~,-,++,--}
+
+remove complex ops
