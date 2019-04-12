@@ -9,8 +9,7 @@ SRC       =     src
 
 HEADERS   =     $(INCLUDES)/*.h
 SOURCE    =     $(SRC)/*.cpp
-OBJECT    =     $(OBJ)/structs.o \
-                $(OBJ)/tokenizer.o \
+OBJECT    =     $(OBJ)/tokenizer.o \
                 $(OBJ)/parser.o \
                 $(OBJ)/main.o
 
