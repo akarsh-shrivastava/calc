@@ -27,7 +27,7 @@ std::vector<Token> Tokenizer::get_tokens(std::string code)
             {
                 if(!str_open)
                     end_word();
-                str_open=(str_open)?0:1;
+                str_open=(str_open)?false:true;
             }
         }
 
@@ -37,7 +37,7 @@ std::vector<Token> Tokenizer::get_tokens(std::string code)
             {
                 if(!char_open)
                     end_word();
-                char_open=(char_open)?0:1;
+                char_open=(char_open)?false:true;
             }
         }
 
@@ -75,7 +75,11 @@ std::vector<Token> Tokenizer::get_tokens(std::string code)
                 end_word(true);
                 i++;
             }
-            else
+            else if(ch=='"' || ch=='\'')
+            {
+                tok.push_back(ch);
+            }
+            else 
             {
                 end_word();
                 tok.push_back(ch);
@@ -130,7 +134,20 @@ TokenType Tokenizer::get_token_type(std::string tok)
     if(tok == "call")   return CALL;
     if(tok == "return") return RETURN;
 
+    if(*(tok.begin()) == '"' && *(tok.end()-1) == '"') return STRINGCONST;
+    if(*(tok.begin()) == '\'' && *(tok.end()-1) == '\'') return CHARCONST;
+
+    if(isnumconst(tok)) return NUMCONST;
+
     return POSSIBLE_IDENTIFIER;
+}
+
+bool Tokenizer::isnumconst(std::string tok)
+{
+    for(std::string::iterator i=tok.begin(); i!=tok.end(); i++)
+        if(!isdigit(*i))
+            return false;
+    return true;
 }
 
 

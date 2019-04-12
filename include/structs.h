@@ -10,6 +10,9 @@
     {
         DELIMITOR,
         OPERATOR,
+        NUMCONST,
+        STRINGCONST,
+        CHARCONST,
         DATA,
         CODE,
         END,

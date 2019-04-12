@@ -13,5 +13,6 @@
         void end_word(bool isop);
         std::vector<Token> get_tokens(std::string code);
         TokenType get_token_type(std::string tok);
+        bool isnumconst(std::string tok);
     };
 #endif

@@ -1,1 +1,9 @@
-a+b/=-d
+data
+	a 10;
+	b 20;
+	c 30;
+end
+
+code
+	a+b/=-d;
+end
