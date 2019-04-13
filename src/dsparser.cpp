@@ -6,7 +6,7 @@ Dsparser::Dsparser(std::vector<Token> data)
     proceed = true;
 }
 
-std::string Dsparser::syntax()
+std::string Dsparser::get_ds_asm()
 {
     DsState current_state = DS_BEGIN;
     std::vector<Token> q;

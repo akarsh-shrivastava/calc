@@ -22,7 +22,7 @@
         std::string error_msg;
 
         Dsparser(std::vector<Token> data);
-        std::string syntax();
+        std::string get_ds_asm();
     };
 
 #endif

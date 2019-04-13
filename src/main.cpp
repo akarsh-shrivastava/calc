@@ -8,7 +8,6 @@
 #include "tokenizer.h"
 #include "segments.h"
 #include "dsparser.h"
-//#include "parser.h"
 
 std::map<std::string, int> symbol_table;
 
@@ -24,14 +23,14 @@ int main(int argc, char** argv)
     std::ifstream f(argv[1]);
     if (filename.substr(dot_pos) != ".calc")
     {
-        std::cout<<"invalid file type\n";
+        std::cerr<<"invalid file type\n";
         exit(1);
     }
     filename = filename.substr(0,dot_pos);
 
     if(!f)
     {
-        std::cout<<"No such file\n";
+        std::cerr<<"No such file\n";
         exit(1);
     }
     while(f.get(ch))
@@ -57,7 +56,7 @@ int main(int argc, char** argv)
     }*/
 
     Dsparser dsparser(segments["data"]);
-    std::string ds_asm = dsparser.syntax();
+    std::string ds_asm = dsparser.get_ds_asm();
 
     std::cout<<"\n\n\n"<<ds_asm<<"\n\n";
 
