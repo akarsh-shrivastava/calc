@@ -10,6 +10,7 @@ SRC       =     src
 HEADERS   =     $(INCLUDES)/*.h
 SOURCE    =     $(SRC)/*.cpp
 OBJECT    =     $(OBJ)/tokenizer.o \
+                $(OBJ)/segments.o \
                 $(OBJ)/parser.o \
                 $(OBJ)/main.o
 

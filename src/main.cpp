@@ -6,6 +6,7 @@
 
 #include "structs.h"
 #include "tokenizer.h"
+#include "segments.h"
 //#include "parser.h"
 
 int main(int argc, char** argv)
@@ -38,10 +39,20 @@ int main(int argc, char** argv)
     Tokenizer tokenizer;
     std::vector<Token> tokens = tokenizer.get_tokens(code);
 
-    for (std::vector<Token>::iterator i = tokens.begin(); i != tokens.end(); ++i)
+    Segments segment;
+    std::map<std::string, std::vector<Token>> segments = segment.get_segments(tokens);
+
+    std::cout<<"\n\nData Segment:\n";
+    for (std::vector<Token>::iterator i = segments["data"].begin(); i != segments["data"].end(); ++i)
     {
         i->print();
     }
+    std::cout<<"\nCode Segment:\n";
+    for (std::vector<Token>::iterator i = segments["code"].begin(); i != segments["code"].end(); ++i)
+    {
+        i->print();
+    }
+
 
     /*std::vector<std::string> data={"a","b","c","d"};
 

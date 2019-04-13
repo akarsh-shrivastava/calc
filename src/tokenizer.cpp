@@ -47,6 +47,9 @@ std::vector<Token> Tokenizer::get_tokens(std::string code)
             end_word();
         else if (ch=='\n')
         {
+            end_word();
+            tok.push_back('\n');
+            end_word();
             line_no++;
         }
         else if (ispunct(ch) && ch!='_')
@@ -126,7 +129,7 @@ std::vector<Token> Tokenizer::get_tokens(std::string code)
 
 TokenType Tokenizer::get_token_type(std::string tok)
 {
-    if(tok == ";")      return DELIMITOR;
+    if(tok == "\n")     return DELIMITOR;
     if(tok == "data")   return DATA;
     if(tok == "code")   return CODE;
     if(tok == "end")    return END;

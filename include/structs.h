@@ -29,7 +29,12 @@
         int line;
 
         Token(TokenType tok, std::string lex, int l) : type(tok), lexeme(lex), line(l) {}
-        void print() {  std::cout<<type<<") "<<lexeme<<"    "<<line<<"\n";  }
+        void print() {  
+            std::cout<<type<<") ";
+            std::cout<<((lexeme=="\n")?"\\n":lexeme);
+            std::cout<<"    ";
+            std::cout<<line<<"\n";
+        }
     };
 
 #endif
