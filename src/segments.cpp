@@ -17,7 +17,13 @@ std::map<std::string, std::vector<Token>> Segments::get_segments(std::vector<Tok
                 data.push_back(*i);
                 i++;
             }
+            if(i==tokens.end())
+            {
+                error_msg+=("Error at line "+std::to_string((i-1)->line+1)+": No end statement found after reaching end of file\n");
+                goto end_loop;
+            }
             data.push_back(*i);
+
         }
         else if(i->type == CODE)
         {
@@ -31,7 +37,13 @@ std::map<std::string, std::vector<Token>> Segments::get_segments(std::vector<Tok
                 code.push_back(*i);
                 i++;
             }
+            if(i==tokens.end())
+            {
+                error_msg+=("Error at line "+std::to_string((i-1)->line+1)+": No end statement found after reaching end of file\n");
+                goto end_loop;
+            }
             code.push_back(*i);
+
         }
     }
     end_loop:;
@@ -43,7 +55,7 @@ std::map<std::string, std::vector<Token>> Segments::get_segments(std::vector<Tok
     }
     else
     {
-        std::cout<<error_msg;
+        std::cerr<<error_msg;
         return segments;
     }
 }

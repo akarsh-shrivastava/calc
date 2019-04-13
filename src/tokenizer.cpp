@@ -134,7 +134,6 @@ TokenType Tokenizer::get_token_type(std::string tok)
     if(tok == "code")   return CODE;
     if(tok == "end")    return END;
     if(tok == "extern") return EXTERN;
-    if(tok == "call")   return CALL;
     if(tok == "return") return RETURN;
 
     if(*(tok.begin()) == '"' && *(tok.end()-1) == '"') return STRINGCONST;

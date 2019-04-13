@@ -7,11 +7,14 @@
 #include "structs.h"
 #include "tokenizer.h"
 #include "segments.h"
+#include "dsparser.h"
 //#include "parser.h"
+
+std::map<std::string, int> symbol_table;
 
 int main(int argc, char** argv)
 {
-	std::string filename(argv[1]);
+    std::string filename(argv[1]);
     std::size_t dot_pos = filename.find(".");
 
     std::string code="";
@@ -42,7 +45,7 @@ int main(int argc, char** argv)
     Segments segment;
     std::map<std::string, std::vector<Token>> segments = segment.get_segments(tokens);
 
-    std::cout<<"\n\nData Segment:\n";
+    /*std::cout<<"\n\nData Segment:\n";
     for (std::vector<Token>::iterator i = segments["data"].begin(); i != segments["data"].end(); ++i)
     {
         i->print();
@@ -51,7 +54,14 @@ int main(int argc, char** argv)
     for (std::vector<Token>::iterator i = segments["code"].begin(); i != segments["code"].end(); ++i)
     {
         i->print();
-    }
+    }*/
+
+    Dsparser dsparser(segments["data"]);
+    std::string ds_asm = dsparser.syntax();
+
+    std::cout<<"\n\n\n"<<ds_asm<<"\n\n";
+
+
 
 
     /*std::vector<std::string> data={"a","b","c","d"};

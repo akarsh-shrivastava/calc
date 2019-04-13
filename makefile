@@ -11,7 +11,7 @@ HEADERS   =     $(INCLUDES)/*.h
 SOURCE    =     $(SRC)/*.cpp
 OBJECT    =     $(OBJ)/tokenizer.o \
                 $(OBJ)/segments.o \
-                $(OBJ)/parser.o \
+                $(OBJ)/dsparser.o \
                 $(OBJ)/main.o
 
 CXFLAGS   =     -c -I$(INCLUDES) -fPIC -std=c++17 -O3

@@ -17,7 +17,6 @@
         CODE,
         END,
         EXTERN,
-        CALL,
         RETURN,
         POSSIBLE_IDENTIFIER
     };
