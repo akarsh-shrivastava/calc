@@ -3,11 +3,12 @@ data
 	b
 	c
 	d
+	f
+	g
 end
 
-code
-	extern write_int
-	d=a-b*c
-	write_int(d)
-	return a
+data
+	s
+	
+	h
 end

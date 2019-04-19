@@ -4,30 +4,24 @@
     #include <vector>
     #include "structs.h"
 
-    extern std::map<std::string, int> data_symbol_table;
-    extern std::string text_section;
+    extern std::map<std::string, int> symbol_table;
+
     enum DsState
     {
         DS_BEGIN,
         DS_GOT_IDEN,
-        DS_ARG,
         DS_CORRECT_LINE,
-        DS_ARG_CORRECT,
         DS_ERROR
     };
 
     struct Dsparser
     {
         std::vector<Token> data;
-        std::string ds_code;
+        std::string code;
         bool proceed;
         std::string error_msg;
-        int curr_arg_no;
-
 
         Dsparser(std::vector<Token> data);
-        std::string get_arg_register(std::string data);
-
         std::string get_ds_asm();
     };
 

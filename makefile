@@ -12,7 +12,6 @@ SOURCE    =     $(SRC)/*.cpp
 OBJECT    =     $(OBJ)/tokenizer.o \
                 $(OBJ)/segments.o \
                 $(OBJ)/dsparser.o \
-                $(OBJ)/csparser.o \
                 $(OBJ)/main.o
 
 CXFLAGS   =     -c -I$(INCLUDES) -fPIC -std=c++17 -O3
