@@ -82,6 +82,12 @@ std::vector<Token> Tokenizer::get_tokens(std::string code)
             {
                 tok.push_back(ch);
             }
+            else if(ch == '(' || ch == ')')
+            {
+                end_word();
+                tok.push_back(ch);
+                end_word();
+            }
             else 
             {
                 end_word();
@@ -133,8 +139,11 @@ TokenType Tokenizer::get_token_type(std::string tok)
     if(tok == "data")   return DATA;
     if(tok == "code")   return CODE;
     if(tok == "end")    return END;
+    if(tok == "arg")    return ARG;
     if(tok == "extern") return EXTERN;
     if(tok == "return") return RETURN;
+    if(tok == "(")      return PAREN_OPEN;
+    if(tok == ")")      return PAREN_CLOSE;
 
     if(*(tok.begin()) == '"' && *(tok.end()-1) == '"') return STRINGCONST;
     if(*(tok.begin()) == '\'' && *(tok.end()-1) == '\'') return CHARCONST;
