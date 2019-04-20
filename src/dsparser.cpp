@@ -12,13 +12,13 @@ std::string Dsparser::get_arg_register(std::string data)
     curr_arg_no++;
     switch(curr_arg_no)
     {
-        case 1  : return "        mov ["+data+"], rdi\n";
-        case 2  : return "        mov ["+data+"], rsi\n";
-        case 3  : return "        mov ["+data+"], rdx\n";
-        case 4  : return "        mov ["+data+"], rcx\n";
-        case 5  : return "        mov ["+data+"], r8\n";
-        case 6  : return "        mov ["+data+"], r9\n";
-        default : return "        mov rax, [rbp+"+std::to_string((curr_arg_no-6+1)*8)+"]\n        mov ["+data+"], rax\n";
+        case 1  : return "        movq %rdi, "+data+"(%rip)\n";
+        case 2  : return "        movq %rsi, "+data+"(%rip)\n";
+        case 3  : return "        movq %rdx, "+data+"(%rip)\n";
+        case 4  : return "        movq %rcx, "+data+"(%rip)\n";
+        case 5  : return "        movq %r8, "+data+"(%rip)\n";
+        case 6  : return "        movq %r9, "+data+"(%rip)\n";
+        default : return "        movq "+std::to_string((curr_arg_no-6+1)*8)+"(%rbp), %rax\n        movq %rax, "+data+"(%rip)\n";
     }
 }
 
@@ -82,7 +82,7 @@ std::string Dsparser::get_ds_asm()
             std::vector<Token>::iterator str_itr = q.begin();
             if(!data_symbol_table.count(str_itr->lexeme))
             {
-                ds_code+=("    "+str_itr->lexeme+" dq 0\n");
+                ds_code+=("    "+str_itr->lexeme+": .quad 0\n");
                 data_symbol_table[str_itr->lexeme] = 0;
                 q.clear();
                 current_state = DS_BEGIN;
@@ -98,7 +98,7 @@ std::string Dsparser::get_ds_asm()
             std::vector<Token>::iterator str_itr = q.begin();
             if(!data_symbol_table.count(str_itr->lexeme))
             {
-                ds_code+=("    "+str_itr->lexeme+" dq 0\n");
+                ds_code+=("    "+str_itr->lexeme+": .quad 0\n");
                 data_symbol_table[str_itr->lexeme] = 0;
                 text_section+=get_arg_register(str_itr->lexeme);
                 q.clear();
@@ -125,7 +125,7 @@ std::string Dsparser::get_ds_asm()
 
     if(proceed)
     {
-        return std::string("section .data\n")+ds_code+"\n";
+        return std::string(".data\n")+ds_code+"\n";
     }
     else
     {

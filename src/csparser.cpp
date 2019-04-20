@@ -126,9 +126,9 @@ std::string Csparser::get_cs_asm()
         }
         else if(current_state == CS_RETURN_CORRECT)
         {
-            std::string ret_val = (q.begin()->type==NUMCONST)?q.begin()->lexeme:(std::string("[")+q.begin()->lexeme+"]");
+            std::string ret_val = (q.begin()->type==NUMCONST)?std::string("$")+q.begin()->lexeme:(q.begin()->lexeme+"(%rip)");
             
-                cs_code+="        mov rax, "+ret_val+"\n        pop qword rbp\n        ret\n";
+                cs_code+="        movq "+ret_val+", %rax\n        popq %rbp\n        ret\n";
                 q.clear();
             current_state = CS_BEGIN;
         }

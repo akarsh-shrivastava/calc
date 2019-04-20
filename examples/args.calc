@@ -10,5 +10,5 @@ data
 end
 
 code
-	return a
+	return g
 end

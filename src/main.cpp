@@ -51,11 +51,11 @@ int main(int argc, char** argv)
 
     text_section="\
 \
-section .text\n\
-    global "+filename+"\n\
+.text\n\
+    .globl "+filename+"\n\
     "+filename+":\n\
-        push qword rbp\n\
-        mov rbp, rsp\n\
+        pushq %rbp\n\
+        movq %rsp, %rbp\n\
 ";
 
     Dsparser dsparser(segments["data"]);
