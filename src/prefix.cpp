@@ -71,21 +71,3 @@ bool Parser::to_postfix()
     return true;
 }
 
-int Parser::get_precedence(std::string op)
-{
-    if(op=="++"||op=="--")                                return 1;
-    if(op=="!"||op=="~")                                  return 2;
-    if(op=="%"||op=="/"||op=="*")                         return 3;
-    if(op=="+"||op=="-")                                  return 4;
-    if(op=="<<"||op==">>")                                return 5;
-    if(op=="<"||op==">"||op==">="||op=="<=")              return 6;
-    if(op=="!="||op=="==")                                return 7;
-    if(op=="&")                                           return 8;
-    if(op=="^")                                           return 9;
-    if(op=="|")                                           return 10;
-    if(op=="&&")                                          return 11;
-    if(op=="||")                                          return 12;
-    if(op=="="||op=="+="||op=="-="||op=="*="||op=="/="
-        ||op=="%="||op=="&="||op=="|="||op=="^=")         return 14;
-    return 100;
-}

@@ -52,8 +52,8 @@ int main(int argc, char** argv)
     text_section="\
 \
 .text\n\
-    .globl "+filename+"\n\
-    "+filename+":\n\
+    .globl "+filename.substr(filename.rfind("/")+1)+"\n\
+    "+filename.substr(filename.rfind("/")+1)+":\n\
         pushq %rbp\n\
         movq %rsp, %rbp\n\
 ";

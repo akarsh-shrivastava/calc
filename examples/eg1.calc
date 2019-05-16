@@ -6,9 +6,7 @@ data
 	f
 	g
 end
-
-data
-	s
-	
-	h
+code
+	a=(c+d)/b-g
+	return a
 end

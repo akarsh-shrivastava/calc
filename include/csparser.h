@@ -28,9 +28,12 @@
         bool valid;
         bool proceed;
         std::string error_msg;
+        std::vector<Token> expression;
 
         Csparser(std::vector<Token> code);
         void validate();
+        int get_precedence(std::string op);
+        void evaluate_exp();
         std::string get_cs_asm();
     };
 #endif

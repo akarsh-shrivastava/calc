@@ -4,9 +4,72 @@
 Csparser::Csparser(std::vector<Token> code)
 {
     this->code = code;
-    bool valid = true;
-    bool proceed = true;
+    this->valid = true;
+    this->proceed = true;
 }
+
+void Csparser::evaluate_exp()
+{
+    std::vector<Token> postfix;
+    std::stack <Token> optrs;
+    for (std::vector<Token>::iterator i = expression.begin(); i != expression.end(); ++i)
+    {
+        if(func_symbol_table.count(i->lexeme) || data_symbol_table.count(i->lexeme))
+            postfix.push_back(*i);
+        else if(get_precedence(i->lexeme)!=-1)
+        {
+            while((!optrs.empty()) && (optrs.top().type!=PAREN_OPEN) && (get_precedence(optrs.top().lexeme)<=get_precedence(i->lexeme)))
+            {
+                postfix.push_back(optrs.top());
+                optrs.pop();
+            }
+            optrs.push(*i);
+        }
+        else if(i->type == PAREN_OPEN)
+            optrs.push(*i);
+        else if(i->type == PAREN_CLOSE)
+        {
+            for( ;(!optrs.empty())&&(optrs.top().type!=PAREN_OPEN); optrs.pop())
+                postfix.push_back(optrs.top());
+            if(optrs.empty())
+            {
+                error_msg += "Error at line "+std::to_string(i->line)+": Unbalanced parentheses \n";
+                proceed = false;
+                break;
+            }
+            optrs.pop();
+        }
+        else
+        {
+            error_msg += "Error at line "+std::to_string(i->line)+": Unknown symbol \""+i->lexeme+"\"\n";
+            proceed = false;
+            break;
+        }
+    }
+    while(!optrs.empty()){
+        if(optrs.top().type == PAREN_OPEN)
+        {
+            error_msg += "Error at line "+std::to_string(expression.begin()->line)+": Unbalanced parentheses \n";
+            proceed = false;
+            break;
+        }
+        postfix.push_back(optrs.top());
+        optrs.pop();
+    }
+    if(optrs.empty()&&proceed)
+        tac_gen(postfix);
+}
+
+void Csparser::tac_gen(std::vector<Token> postfix)
+{
+    for (std::vector<Token>::iterator i = postfix.begin(); i != postfix.end(); ++i)
+    {
+        std::cout<<i->lexeme;
+
+    }
+    std::cout<<std::endl;
+}
+
 
 std::string Csparser::get_cs_asm()
 {
@@ -28,6 +91,12 @@ std::string Csparser::get_cs_asm()
                 current_state = CS_EXTERN_DECL;
             else if(i->type==RETURN)
                 current_state = CS_RETURN;
+            else
+            {
+                for(;i->type!=DELIMITOR;i++)
+                    expression.push_back(*i);
+                evaluate_exp();                
+            }
         }
         else if(current_state == CS_EXTERN_DECL)
         {
@@ -148,4 +217,23 @@ std::string Csparser::get_cs_asm()
     std::cerr<<error_msg<<std::endl;
     return cs_code;
 
+}
+
+int Csparser::get_precedence(std::string op)
+{
+    if(op=="++"||op=="--")                                return 1;
+    if(op=="!"||op=="~"||op=="u-")                        return 2;
+    if(op=="%"||op=="/"||op=="*")                         return 3;
+    if(op=="+"||op=="-")                                  return 4;
+    if(op=="<<"||op==">>")                                return 5;
+    if(op=="<"||op==">"||op==">="||op=="<=")              return 6;
+    if(op=="!="||op=="==")                                return 7;
+    if(op=="&")                                           return 8;
+    if(op=="^")                                           return 9;
+    if(op=="|")                                           return 10;
+    if(op=="&&")                                          return 11;
+    if(op=="||")                                          return 12;
+    if(op=="="||op=="+="||op=="-="||op=="*="||op=="/="
+        ||op=="%="||op=="&="||op=="|="||op=="^=")         return 14;
+    return -1;
 }

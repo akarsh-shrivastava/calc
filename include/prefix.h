@@ -22,6 +22,6 @@
 
         Parser(std::vector<std::string> tokens, std::vector<std::string>);
         bool to_postfix();
-        int get_precedence(std::string op);
+        
     };
 #endif
