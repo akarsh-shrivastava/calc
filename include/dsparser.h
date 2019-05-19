@@ -19,13 +19,14 @@
     struct Dsparser
     {
         std::vector<Token> data;
+        std::vector<Token> code;
         std::string ds_code;
         bool proceed;
         std::string error_msg;
         int curr_arg_no;
 
 
-        Dsparser(std::vector<Token> data);
+        Dsparser(std::vector<Token> data, std::vector<Token> code);
         std::string get_arg_register(std::string data);
 
         std::string get_ds_asm();

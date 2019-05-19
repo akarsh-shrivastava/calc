@@ -1,49 +1,36 @@
 TARGET = calc
 
+
+FX        =     flex++
 CX        =     g++
 LD        =     g++
 
 INCLUDES  =     include
-OBJ       =     .obj
-SRC       =     src
+CXOBJ     =     .obj
+CXSRC     =     src/cpp
+
+FXSRC     =     src/flex
+FXTAR     =     src/cpp
+
+FXSOURCE  =     $(FXSRC)/*.l
+FXTARGET  =     $(FXTAR)/lexer.cpp
 
 HEADERS   =     $(INCLUDES)/*.h
-SOURCE    =     $(SRC)/*.cpp
-OBJECT    =     $(OBJ)/tokenizer.o \
-                $(OBJ)/segments.o \
-                $(OBJ)/dsparser.o \
-                $(OBJ)/csparser.o \
-                $(OBJ)/main.o
+CXSOURCE  =     $(CXSRC)/*.cpp
+CXOBJECT  =     $(CXOBJ)/lexer.o \
+                $(CXOBJ)/segments.o \
+                $(CXOBJ)/dsparser.o \
+                $(CXOBJ)/csparser.o \
+                $(CXOBJ)/main.o
 
-CXFLAGS   =     -c -I$(INCLUDES) -fPIC -std=c++17 -O3
+CXFLAGS   =     -c -I$(INCLUDES) -fPIC -O3
 
-CP        =     cp
-RM        =     rm
-RMFLAGS   =     -f
-MKDIR     =     mkdir
-DIREXISTS =     test -d
 
-HOMEBIN   =     ~/bin
+$(TARGET): $(CXOBJECT)
+	$(LD) $^ -o $@ 
 
-GIT       =     git
-PULL      =     pull
-REMOTE    =     origin
-BRANCH    =     master
-MAKE      =     make
+$(CXOBJ)/%.o: $(CXSRC)/%.cpp $(HEADERS)
+	$(CX) $(CXFLAGS) $< -o $@
 
-$(TARGET): $(OBJECT)
-	$(LD) $^ -o $@
-
-$(OBJ)/%.o: $(SRC)/%.cpp $(HEADERS)
-	$(CX) $(CXFLAGS) -o $@ $< 
-
-install: $(TARGET)
-	@$(DIREXISTS) $(HOMEBIN) || $(MKDIR) $(HOMEBIN)
-	$(CP) $(TARGET) $(HOMEBIN)/$(TARGET)
-
-uninstall:
-	$(RM) $(RMFLAGS) $(HOMEBIN)/$(TARGET)
-
-update:
-	$(GIT) $(PULL) $(REMOTE) $(BRANCH)
-	$(MAKE) install 
+$(FXTAR)/%.cpp: $(FXSRC)/%.l $(HEADERS)
+	$(FX) --outfile=$@ $<

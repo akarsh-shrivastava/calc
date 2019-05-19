@@ -5,15 +5,18 @@
 #include <cstdlib>
 
 #include "structs.h"
-#include "tokenizer.h"
 #include "segments.h"
 #include "dsparser.h"
 #include "csparser.h"
 
+std::vector<Token> tokens;
 std::map<std::string, int> data_symbol_table;
 std::map<std::string, int> func_symbol_table;
 std::string text_section;
 std::string data_section;
+
+
+void lexer(std::string);
 
 int main(int argc, char** argv)
 {
@@ -25,6 +28,12 @@ int main(int argc, char** argv)
 
 
     std::ifstream f(argv[1]);
+    if(!f)
+    {
+        std::cerr<<"No such file\n";
+        exit(1);
+    }
+    f.close();
     if (filename.substr(dot_pos) != ".calc")
     {
         std::cerr<<"invalid file type\n";
@@ -32,18 +41,9 @@ int main(int argc, char** argv)
     }
     filename = filename.substr(0,dot_pos);
 
-    if(!f)
-    {
-        std::cerr<<"No such file\n";
-        exit(1);
-    }
-    while(f.get(ch))
-        code.push_back(ch);
-    f.close();
 
-    
-    Tokenizer tokenizer;
-    std::vector<Token> tokens = tokenizer.get_tokens(code);
+
+    lexer(filename+".calc");
 
     Segments segment;
     std::map<std::string, std::vector<Token>> segments = segment.get_segments(tokens);
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
         movq %rsp, %rbp\n\
 ";
 
-    Dsparser dsparser(segments["data"]);
+    Dsparser dsparser(segments["data"], segments["code"]);
     data_section = dsparser.get_ds_asm();
 
     Csparser csparser(segments["code"]);

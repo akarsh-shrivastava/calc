@@ -1,8 +1,9 @@
 #include "dsparser.h"
 
-Dsparser::Dsparser(std::vector<Token> data)
+Dsparser::Dsparser(std::vector<Token> data, std::vector<Token> code)
 {
     this->data = data;
+    this->code = code;
     proceed = true;
     curr_arg_no = 0;
 }
@@ -86,6 +87,11 @@ std::string Dsparser::get_ds_asm()
                 data_symbol_table[str_itr->lexeme] = 0;
                 q.clear();
                 current_state = DS_BEGIN;
+                for (std::vector<Token>::iterator itr = code.begin(); itr != code.end(); ++itr)
+                {
+                    if(itr->lexeme == str_itr->lexeme)
+                        i->type = VARIABLE;
+                }
             }
             else
             {
@@ -103,6 +109,11 @@ std::string Dsparser::get_ds_asm()
                 text_section+=get_arg_register(str_itr->lexeme);
                 q.clear();
                 current_state = DS_BEGIN;
+                for (std::vector<Token>::iterator itr = code.begin(); itr != code.end(); ++itr)
+                {
+                    if(itr->lexeme == str_itr->lexeme)
+                        i->type = VARIABLE;
+                }
             }
             else
             {

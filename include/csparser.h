@@ -29,11 +29,13 @@
         bool proceed;
         std::string error_msg;
         std::vector<Token> expression;
+        std::vector<Token> postfix;
 
         Csparser(std::vector<Token> code);
         void validate();
         int get_precedence(std::string op);
         void evaluate_exp();
+        void tac_gen();
         std::string get_cs_asm();
     };
 #endif

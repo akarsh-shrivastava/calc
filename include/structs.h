@@ -9,18 +9,27 @@
     {
         DELIMITOR,
         OPERATOR,
+        
         NUMCONST,
-        STRINGCONST,
-        CHARCONST,
+        STRCONST,
+        CHRCONST,
+        
         PAREN_OPEN,
         PAREN_CLOSE,
+        
         ARG,
+        
         DATA,
         CODE,
         END,
+        
         EXTERN,
         RETURN,
-        POSSIBLE_IDENTIFIER
+
+        POSSIBLE_IDENTIFIER,
+        VARIABLE,
+        FUNCTION,
+        UNKNOWN,
     };
 
     struct Token
