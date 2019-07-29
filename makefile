@@ -23,7 +23,7 @@ CXOBJECT  =     $(CXOBJ)/lexer.o \
                 $(CXOBJ)/csparser.o \
                 $(CXOBJ)/main.o
 
-CXFLAGS   =     -c -I$(INCLUDES) -fPIC -O3
+CXFLAGS   =     -c -I$(INCLUDES) -fPIC -O3 -std=c++17 -gdwarf
 
 
 $(TARGET): $(CXOBJECT)
@@ -33,4 +33,4 @@ $(CXOBJ)/%.o: $(CXSRC)/%.cpp $(HEADERS)
 	$(CX) $(CXFLAGS) $< -o $@
 
 $(FXTAR)/%.cpp: $(FXSRC)/%.l $(HEADERS)
-	$(FX) --outfile=$@ $<
+	$(FX) -o$@ $<

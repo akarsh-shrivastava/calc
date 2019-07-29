@@ -1,0 +1,12 @@
+data
+	a arg
+	b arg
+	c arg
+	d arg
+	e arg
+	x
+end
+code
+	x=8+a*b+c-d*e
+	return x
+end

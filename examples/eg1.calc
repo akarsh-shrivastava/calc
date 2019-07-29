@@ -7,6 +7,6 @@ data
 	g
 end
 code
-	a=(c+d)/b-g
+	a=c+d/b-g
 	return a
 end

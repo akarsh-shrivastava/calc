@@ -32,7 +32,8 @@ std::string Csparser::get_cs_asm()
             {
                 for(;i->type!=DELIMITOR;i++)
                     expression.push_back(*i);
-                gen_prefix();                
+                gen_postfix();
+                postfix.clear();
             }
         }
         else if(current_state == CS_EXTERN_DECL)
@@ -162,12 +163,12 @@ std::string Csparser::get_cs_asm()
 }
 
 
-void Csparser::gen_prefix()
+void Csparser::gen_postfix()
 {
     std::stack <Token> optrs;
     for (std::vector<Token>::iterator i = expression.begin(); i != expression.end(); ++i)
     {
-        if(data_symbol_table.count(i->lexeme))
+        if(data_symbol_table.count(i->lexeme) || i->type==NUMCONST)
             postfix.push_back(*i);
         else if(get_precedence(i->lexeme)!=-1)
         {
@@ -210,38 +211,149 @@ void Csparser::gen_prefix()
         postfix.push_back(optrs.top());
         optrs.pop();
     }
-    if (!optrs.empty()) proceed = false;
+
     for (std::vector<Token>::iterator i = postfix.begin(); i != postfix.end(); ++i)
     {
         std::cout<<i->lexeme;
     }
+
+
+    if (!optrs.empty()) proceed = false;
+    else gen_code();
+    postfix.clear();
 }
 
-struct registers
-{
-    std::vector<std::string> regs;
-    std::vector<std::string>::iterator i;
-    registers(){
-        regs = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9", "%r10", "%r11", "%r12", "%r13"};
-        i = regs.begin();
-    }
-    bool operator++(){
-        if(i==regs.end()-1) return false;
-        i++; return true;
-    }
-    bool operator--(){
-        if(i==regs.begin()) return false;
-        i--; return true;
-    }
-    std::string get(){
-        return *i;
-    }
-} curr;
+
 
 void Csparser::gen_code()
 {
-    stack<Token> st;
-    
+    std::stack<Token> st;
+    for (std::vector<Token>::iterator i = postfix.begin(); i != postfix.end(); ++i)
+    {
+        if(i->type == POSSIBLE_IDENTIFIER)
+        {
+            if(!data_symbol_table.count(i->lexeme))
+            {
+                error_msg += "Error at line "+std::to_string(i->line)+": Unknown symbol \""+i->lexeme+"\"\n";
+                proceed = false;
+            }
+            st.push(*i);
+        }
+        else if(i->type == NUMCONST)
+            st.push(*i);
+        else
+        {
+            std::vector<Token> operands;
+            if (st.empty())
+            {
+                error_msg += "Error at line "+std::to_string(i->line)+": Misplaced operator \""+i->lexeme+"\"\n";
+                proceed = false;
+                continue;
+            }
+            operands.push_back(st.top()); st.pop();
+            operands.push_back(st.top()); st.pop();
+            st.push(get_opcode(*i, operands[1], operands[0]));
+        }
+    }
+}
+
+Token Csparser::get_opcode(Token op,Token operand1, Token operand2)
+{
+    std::string opcode, reg=registers::get(), code="";
+    if(op.lexeme=="++")    opcode+="not supported";
+    if(op.lexeme=="--")    opcode+="not supported";
+    if(op.lexeme=="!")     opcode+="not supported";
+    if(op.lexeme=="~")     opcode+="not supported";
+    if(op.lexeme=="u-")    opcode+="not supported";
+    if(op.lexeme=="%")     opcode+="not supported";
+    if(op.lexeme=="/")     opcode+="divq";
+    if(op.lexeme=="*")     opcode+="mulq";
+    if(op.lexeme=="+")     opcode+="addq";
+    if(op.lexeme=="-")     opcode+="subq";
+    if(op.lexeme=="<<")    opcode+="shlq";
+    if(op.lexeme==">>")    opcode+="shrq";
+    if(op.lexeme=="&")     opcode+="andq";
+    if(op.lexeme=="^")     opcode+="xorq";
+    if(op.lexeme=="|")     opcode+="orq";
+    if(op.lexeme=="=")     opcode+="movq";
+    if(op.lexeme=="<"||op.lexeme==">"||op.lexeme==">="||op.lexeme=="<="||op.lexeme=="!="||op.lexeme=="==")    opcode+="not suppprted";
+    if(op.lexeme=="&&")    opcode+="not supported";
+    if(op.lexeme=="||")    opcode+="not supported";
+    if(op.lexeme=="+=")    opcode+="not supported";
+    if(op.lexeme=="-=")    opcode+="not supported";
+    if(op.lexeme=="*=")    opcode+="not supported";
+    if(op.lexeme=="/=")    opcode+="not supported";
+    if(op.lexeme=="%=")    opcode+="not supported";
+    if(op.lexeme=="&=")    opcode+="not supported";
+    if(op.lexeme=="|=")    opcode+="not supported";
+    if(op.lexeme=="^=")    opcode+="not supported";
+    if(op.lexeme=="<<=")   opcode+="not supported";
+    if(op.lexeme==">>=")   opcode+="not supported";
+
+    if(opcode == "not supported")
+    {
+        error_msg+="Error at line "+std::to_string(op.line)+": Operator "+op.lexeme+" not supported.\n";
+        proceed=false;
+        return Token(REGISTER, registers::get(), op.line);
+    }
+
+    if(opcode == "movq")
+    {
+        if(operand1.type!=POSSIBLE_IDENTIFIER)
+        {
+            error_msg+="Error at line "+std::to_string(op.line)+": Bad lvalue (lvalue must be a variable).\n";
+            proceed=false;
+            return Token(REGISTER, "%rdi", op.line);
+        }
+        else
+        {
+            code+="        movq ";
+            switch(operand2.type)
+            {
+                case REGISTER: code+=operand2.lexeme; break;
+                case POSSIBLE_IDENTIFIER: code+=operand2.lexeme+"(%rip)"; break;
+                case NUMCONST: code+="$"+operand2.lexeme; break;
+            }
+            code+=", "+operand1.lexeme+"(%rip)\n";
+            return Token(POSSIBLE_IDENTIFIER, operand1.lexeme, operand1.line);
+        }
+    }
+    switch(operand1.type)
+    {
+        case POSSIBLE_IDENTIFIER:   if(registers::alloc()){
+                                        reg=registers::get();
+                                        code+="        movq "+operand1.lexeme+"(%rip), "+reg+"\n";
+                                    }
+                                    else
+                                    {
+                                        error_msg+="Error at line "+std::to_string(op.line)+": Too many operations in this line. Break them into multiple lines.\n";
+                                        proceed=false;
+                                        return Token(REGISTER, registers::get(), op.line);
+                                    }; break;
+        case NUMCONST:              if(registers::alloc()){
+                                        reg=registers::get();
+                                        code+="        movq $"+operand1.lexeme+", "+reg+"\n";
+                                    }
+                                    else
+                                    {
+                                        error_msg+="Error at line "+std::to_string(op.line)+": Too many operations in this line. Break them into multiple lines.\n";
+                                        proceed=false;
+                                        return Token(REGISTER, registers::get(), op.line);
+                                    }; break;
+        case REGISTER: break;
+    }
+    code+="        "+opcode;
+    switch(operand2.type)
+    {
+        case POSSIBLE_IDENTIFIER: code+=" "+operand2.lexeme+"(%rip)"+", "+reg+"\n"; break;
+        case NUMCONST           : code+=" $"+operand2.lexeme+", "+reg+"\n"; break;
+        case REGISTER           : code+=" "+operand2.lexeme+", "+reg+"\n"; registers::free(operand2.lexeme); break;
+    }
+    //std::cout<<code<<std::endl;
+    cs_code+=code;
+
+    return Token(REGISTER, reg, op.line);
+
 }
 
 
@@ -260,6 +372,7 @@ int Csparser::get_precedence(std::string op)
     if(op=="&&")                                          return 11;
     if(op=="||")                                          return 12;
     if(op=="="||op=="+="||op=="-="||op=="*="||op=="/="
-        ||op=="%="||op=="&="||op=="|="||op=="^=")         return 14;
+        ||op=="%="||op=="&="||op=="|="||op=="^="
+        ||op=="<<="||op==">>="                        )   return 14;
     return -1;
 }

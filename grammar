@@ -7,27 +7,27 @@ E -> name arg
 
 CODE SEGMENT GRAMMAR
 
-E -> (E)
-E -> E binop E
-E -> DATA asnop E
-E -> unop E
-
-E e  DATA | NUMCONST
-binop -> abo | cmpo
-abo   e {+,-,*,/,%,&,|,^,&&,||,<<,>>,","}
-asnop e {=,+=,-=,*=,/=,%=,&=,|=,^=}
-unop  e {!,~,-,++,--}
-
-cmpo  e {<,>,<=,>=,==,!=}
-
-E -> func(E)
-func e FUNCS
-
-
-remove complex ops
-
-done
-S -> extern POSSIBLE_UNUSED_IDENTIFIER
-POSSIBLE_UNUSED_IDENTIFIER -> POSSIBLE_IDENTIFIER && (POSSIBLE_UNUSED_IDENTIFIER !e DATA) && (POSSIBLE_UNUSED_IDENTIFIER !e FUNCS)
+S -> extern POSSIBLE_IDENTIFIER
 S -> return (DATA|NUMCONST)
 S -> E
+
+E -> (E)
+E -> E binop E
+E -> unop E
+
+E e  POSSIBLE_IDENTIFIER | NUMCONST
+binop -> abo | asnop
+abo   e {+,-,*,/,%,&,|,^,&&,||,<<,>>}
+asnop e {=}
+
+
+
+
+
+
+TODO
+asnop e {+=,-=,*=,/=,%=,&=,|=,^=}
+cmpo  e {<,>,<=,>=,==,!=}
+unop  e {!,~,-,++,--}
+E -> func(E)
+func e FUNCS

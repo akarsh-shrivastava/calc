@@ -29,6 +29,7 @@
         POSSIBLE_IDENTIFIER,
         VARIABLE,
         FUNCTION,
+        REGISTER,
         UNKNOWN,
     };
 

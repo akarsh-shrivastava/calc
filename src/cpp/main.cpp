@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     std::string code="";
     char ch;
 
-
+ 
     std::ifstream f(argv[1]);
     if(!f)
     {
