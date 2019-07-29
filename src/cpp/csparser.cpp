@@ -212,10 +212,10 @@ void Csparser::gen_postfix()
         optrs.pop();
     }
 
-    for (std::vector<Token>::iterator i = postfix.begin(); i != postfix.end(); ++i)
+    /*for (std::vector<Token>::iterator i = postfix.begin(); i != postfix.end(); ++i)
     {
         std::cout<<i->lexeme;
-    }
+    }*/
 
 
     if (!optrs.empty()) proceed = false;
@@ -315,6 +315,7 @@ Token Csparser::get_opcode(Token op,Token operand1, Token operand2)
                 case NUMCONST: code+="$"+operand2.lexeme; break;
             }
             code+=", "+operand1.lexeme+"(%rip)\n";
+            cs_code+=code;
             return Token(POSSIBLE_IDENTIFIER, operand1.lexeme, operand1.line);
         }
     }
@@ -340,7 +341,7 @@ Token Csparser::get_opcode(Token op,Token operand1, Token operand2)
                                         proceed=false;
                                         return Token(REGISTER, registers::get(), op.line);
                                     }; break;
-        case REGISTER: break;
+        case REGISTER:              reg = operand1.lexeme; break;
     }
     code+="        "+opcode;
     switch(operand2.type)
@@ -349,7 +350,7 @@ Token Csparser::get_opcode(Token op,Token operand1, Token operand2)
         case NUMCONST           : code+=" $"+operand2.lexeme+", "+reg+"\n"; break;
         case REGISTER           : code+=" "+operand2.lexeme+", "+reg+"\n"; registers::free(operand2.lexeme); break;
     }
-    //std::cout<<code<<std::endl;
+
     cs_code+=code;
 
     return Token(REGISTER, reg, op.line);

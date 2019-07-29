@@ -1,0 +1,12 @@
+data
+	a
+	b
+	c
+	d
+	e
+	x
+end
+code
+	x=a*b+c*d
+	return x
+end
